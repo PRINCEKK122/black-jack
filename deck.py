@@ -24,5 +24,4 @@ class Deck():
         for card in self.cards:
             display_result += str(card) + "\n"
 
-        # print(len(self.cards))
         return display_result
