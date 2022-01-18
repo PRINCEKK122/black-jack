@@ -8,8 +8,4 @@ class Card():
 
     def __str__(self):
         # return "Name: " + self.cardValue.name  + " of " + self.suit.name
-        return f"""Name: {self.card_value._name_}
-Value: {self.card_value._value_}
-Suit name: {self.suit.name}
-Suit value: {self.suit.value}
-    """
+        return f"Suit: {self.suit.name} Value: {self.card_value._value_}"

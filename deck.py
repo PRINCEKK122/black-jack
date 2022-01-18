@@ -13,7 +13,7 @@ class Deck():
             for card in CardValue:
                 self.cards.append(Card(card, suit))
 
-        self.__shuffle()
+        self.__shuffle()        
 
     def __shuffle(self):
         random.shuffle(self.cards)
@@ -24,7 +24,5 @@ class Deck():
         for card in self.cards:
             display_result += str(card) + "\n"
 
-        print(len(self.cards))
+        # print(len(self.cards))
         return display_result
-
-        # return cards

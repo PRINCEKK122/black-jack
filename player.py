@@ -12,7 +12,6 @@ from card import Card
 
 
 class Player():
-    """Constructor"""
     def __init__(self, player_name: str):
         self.player_name = player_name
         self.player_status = PlayerStatus.HIT
@@ -24,19 +23,26 @@ class Player():
     def get_total_cards_value(self):
         if len(self.cards_in_hand) == 0:
             return 0
-
         return sum([card.card_value._value_ for card in self.cards_in_hand])
 
-    # def get_cards_in_hand(self):
-    #     return self.cards_in_hand
+    def get_cards_in_hand(self):
+        return self.cards_in_hand
 
-    def __set_player_status(self):
+    def get_player_name(self):
+        return self.player_name
+
+    def set_player_status(self):
         if self.get_total_cards_value() < 17:
             self.player_status = PlayerStatus.HIT
         elif self.get_total_cards_value() < 21:
             self.player_status = PlayerStatus.STICK
+        elif self.get_total_cards_value() == 21:
+            self.player_status = PlayerStatus.WINNER
         else:
             self.player_status = PlayerStatus.BUSTED
 
     def get_player_status(self):
         return self.player_status
+
+    def __str__(self):
+        return f"Player name: {self.player_name}. Cards: {[str(card) for card in self.cards_in_hand]}. Total points: {self.get_total_cards_value()}. Player Status: {self.get_player_status()}" 
