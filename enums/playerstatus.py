@@ -6,4 +6,3 @@ class PlayerStatus(Enum):
     STICK = 2
     WINNER = 3
     BUSTED = 4
-    

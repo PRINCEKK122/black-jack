@@ -23,8 +23,8 @@ class Game():
     def __init__(self):
         self.status = GameStatus.IN_PROGRESS
         self.deck = Deck()
-        self.winners: List[Player] = []
-        self.remainingPlayers: List[Player] = []
+        #self.winners: List[Player] = []
+        #self.remainingPlayers: List[Player] = []
         self.players = [
             Player("player1"),
             Player("player2"),
@@ -33,77 +33,58 @@ class Game():
 
     def deal_card(self):
         print("Winner: Inside deal")
-        for player in self.remainingPlayers:
+        for player in self.players:
             if player.get_player_status() == PlayerStatus.HIT:
                 player.accept_card(self.deck.cards.pop())
                 player.set_player_status()
 
     def start_game(self):
         print("Winner: Inside: start game")
-
-        self.remainingPlayers = self.players.copy()        
         self.deal_card()
         self.deal_card()
 
-        print("**********************Remaining players*****************")
-        for player in self.remainingPlayers:
-            print(player)
-
-        while(self.status == GameStatus.IN_PROGRESS):
-            self.checkWinners(self.remainingPlayers)
-
-    def update_game_status(self, winners: List[Player]):
-        if len(winners) == 0:
-            print("No winner in this round")
-            self.status = GameStatus.GAME_OVER
-
-        if len(winners) == 1:
-            print("Original Players:")
+        while self.status == GameStatus.IN_PROGRESS:
+            self.update_game_status()
+            self.deal_card()
             for player in self.players:
                 print(player)
 
-            for winner in winners:
-                print(winner)
-
-            self.status = GameStatus.GAME_OVER
-
-        if len(winners) > 1:
-            print("Original Players:")
-            for player in self.players:
-                print(player)
-                
-            print("There was a tie!")
-
-            for player in winners:
+        if self.status == GameStatus.GAME_OVER:
+            print("\nGame over")
+            print("\nWinners")
+            for player in self.get_winners():
                 print(player)
 
+
+    def update_game_status(self):
+        busted_players = [player for player in self.players if player.get_player_status() == PlayerStatus.BUSTED]
+        stuck_players = [player for player in self.players if player.get_player_status() == PlayerStatus.STICK]
+
+        # set game status to GAME OVER when on player hit exactly 21
+        if any(player.get_total_cards_value() == 21 for player in self.players):
             self.status = GameStatus.GAME_OVER
+            print("A Player reached 21") #active
 
-    def checkWinners(self, players: List[Player]):
-        self.remainingPlayers = [
-            player for player in self.players if player.get_player_status() != PlayerStatus.BUSTED]
+        # set game status to GAME OVER when all players go bust except 1
+        elif (len(self.players) - 1) == len(busted_players):
+            self.status = GameStatus.GAME_OVER
+            print("Only one Player left") # active
 
-        # checks if the is winner
-        for player in self.remainingPlayers:
-            if player.get_player_status() == PlayerStatus.WINNER:
-                print("*********************We have a winner*****************")
-                self.winners.append(player)
-                self.update_game_status(self.winners)
+        # set game status to GAME OVER when all players stick
+        elif len(stuck_players) == len(self.players):
+            self.status = GameStatus.GAME_OVER
+            print("All players stuck") #active
 
-        # checks if all the remaining players are of status STICK
-        if all(player.get_player_status() == PlayerStatus.STICK for player in self.remainingPlayers):
-            highest_score = max([player.get_total_cards_value()
-                               for player in self.remainingPlayers])
-            print("***************All Players are STICK***************")
-           
-            self.winners.append(
-                [player for player in self.remainingPlayers if player.get_total_cards_value() == highest_score])
+        # All Players do not have a stick status
+        elif len(stuck_players)+ len(busted_players) == len(self.players):
+            self.status = GameStatus.GAME_OVER
+            print("No player has a stick status") #active
 
-            self.update_game_status(self.winners)
-        
-        if len(self.remainingPlayers) == 0:
-            print("***************No winners*****************")
-            self.update_game_status(self.winners)
 
-        self.deal_card()
-        # self.status = GameStatus.GAME_OVER
+    def get_winners(self)->List[Player]:
+        winners = [player for player in self.players if player.get_player_status() == PlayerStatus.WINNER]
+        if not winners:
+            max_score = max([player.get_total_cards_value() for player in self.players])
+            winners = [player for player in self.players if player.get_total_cards_value() == max_score]
+        return winners
+
