@@ -19,12 +19,11 @@ from enums.gamestatus import GameStatus
 from enums.playerstatus import PlayerStatus
 
 
-class Game():
+class Game:
     def __init__(self):
         self.status = GameStatus.IN_PROGRESS
         self.deck = Deck()
-        #self.winners: List[Player] = []
-        #self.remainingPlayers: List[Player] = []
+        self.winning_score = 21
         self.players = [
             Player("player1"),
             Player("player2"),
@@ -44,8 +43,8 @@ class Game():
         self.deal_card()
 
         while self.status == GameStatus.IN_PROGRESS:
-            self.update_game_status()
             self.deal_card()
+            self.update_game_status()
             for player in self.players:
                 print(player)
 
@@ -55,7 +54,6 @@ class Game():
             for player in self.get_winners():
                 print(player)
 
-
     def update_game_status(self):
         busted_players = [player for player in self.players if player.get_player_status() == PlayerStatus.BUSTED]
         stuck_players = [player for player in self.players if player.get_player_status() == PlayerStatus.STICK]
@@ -63,28 +61,23 @@ class Game():
         # set game status to GAME OVER when on player hit exactly 21
         if any(player.get_total_cards_value() == 21 for player in self.players):
             self.status = GameStatus.GAME_OVER
-            print("A Player reached 21") #active
 
         # set game status to GAME OVER when all players go bust except 1
         elif (len(self.players) - 1) == len(busted_players):
             self.status = GameStatus.GAME_OVER
-            print("Only one Player left") # active
 
         # set game status to GAME OVER when all players stick
         elif len(stuck_players) == len(self.players):
             self.status = GameStatus.GAME_OVER
-            print("All players stuck") #active
 
         # All Players do not have a stick status
-        elif len(stuck_players)+ len(busted_players) == len(self.players):
+        elif len(stuck_players) + len(busted_players) == len(self.players):
             self.status = GameStatus.GAME_OVER
-            print("No player has a stick status") #active
 
-
-    def get_winners(self)->List[Player]:
+    def get_winners(self) -> List[Player]:
         winners = [player for player in self.players if player.get_player_status() == PlayerStatus.WINNER]
         if not winners:
-            max_score = max([player.get_total_cards_value() for player in self.players])
+            non_busted_players = [player for player in self.players if player.get_total_cards_value() < self.winning_score]
+            max_score = max([player.get_total_cards_value() for player in non_busted_players])
             winners = [player for player in self.players if player.get_total_cards_value() == max_score]
         return winners
-

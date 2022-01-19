@@ -3,7 +3,8 @@ from enums.suit import Suit
 from enums.cardValue import CardValue
 from card import Card
 
-class Deck():
+
+class Deck:
     def __init__(self):
         self.cards = []
         self.__initialize_cards()

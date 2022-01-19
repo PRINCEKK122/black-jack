@@ -1,5 +1,6 @@
 from aenum import NamedConstant
 
+
 class CardValue(NamedConstant):
     TWO = 2
     THREE = 3

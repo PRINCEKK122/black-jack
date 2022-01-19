@@ -11,7 +11,7 @@ from enums.playerstatus import PlayerStatus
 from card import Card
 
 
-class Player():
+class Player:
     def __init__(self, player_name: str):
         self.player_name = player_name
         self.player_status = PlayerStatus.HIT
@@ -19,6 +19,7 @@ class Player():
 
     def accept_card(self, card: Card):
         self.cards_in_hand.append(card)
+        self.set_player_status()
 
     def get_total_cards_value(self):
         if len(self.cards_in_hand) == 0:
