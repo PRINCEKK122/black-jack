@@ -13,6 +13,8 @@ class Player():
         self.cards_in_hand.append(card)
 
     def get_total_cards_value(self):
+        if len(self.cards_in_hand) == 0:
+            return 0
         return sum([card.card_value._value_ for card in self.cards_in_hand])
 
     def get_cards_in_hand(self):
