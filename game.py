@@ -7,7 +7,6 @@ from enums.playerstatus import PlayerStatus
 
 class Game():
     def __init__(self, players: List[Player]):
-        # print(*players)
         self.status = GameStatus.IN_PROGRESS
         self.deck = Deck()
         self.winners: List[Player] = []
@@ -67,15 +66,15 @@ class Game():
             for player in winners:
                 self.winners.append(player)
 
-            return
-
-        if len(self.winners) > 1 or len(self.remainingPlayers) == 0:
+        if len(self.winners) >= 1 or len(self.remainingPlayers) == 0:
             self.update_game_status(self.winners)
             return
 
         if len(self.remainingPlayers) == 1:
             print("Last man standing")
             for winner in self.remainingPlayers:
+                if (winner.get_player_status() == PlayerStatus.STICK):
+                    break
                 self.winners.append(winner)
             self.update_game_status(self.winners)
             return
